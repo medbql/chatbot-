@@ -1,6 +1,6 @@
 import whatsaap from "whatsapp-web.js";
 import qrcode from "qrcode-terminal";
-
+import { getAiResponse } from "./chat.js";
 
 const client = new whatsaap.Client({
   authStrategy: new whatsaap.LocalAuth(),
@@ -28,25 +28,9 @@ client.on('message_create', async (message) => {
   if (message.fromMe) return;
 
   try {
-    // Simple responses
-    if (msg.includes('hello') || msg.includes('hi')) {
-      await message.reply('Hi! 👋 How can I help you? ');
-    }
-    else if (msg.includes('price')) {
-      await message.reply('Our prices start at $50.  Contact us for details!');
-    }
-    else if (msg.includes('service')) {
-      await message.reply('We offer web development, apps, and consulting.');
-    }
-    else if (msg.includes('contact')) {
-      await message.reply('📞 Phone: +1234567890\n📧 Email: info@company.com');
-    }
-    else {
-      await message.reply('Thanks for your message! Type "hello" to start.');
-    }
-
+    const aiResponse = await getAiResponse(message.body);
+    await message.reply(aiResponse);
     console.log('✅ Reply sent');
-
   } catch (error) {
     console.log('❌ Error:', error);
   }
